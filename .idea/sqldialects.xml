@@ -15,7 +15,11 @@
     <file url="file://$PROJECT_DIR$/cmd/migrate/migrations/000006_add_version_posts.up.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/cmd/migrate/migrations/000007_add_followers_table.down.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/cmd/migrate/migrations/000007_add_followers_table.up.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/cmd/migrate/migrations/000008_add_indexes.down.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/cmd/migrate/migrations/000008_add_indexes.up.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/internal/store/comments.go" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/internal/store/followers.go" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/internal/store/posts.go" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/scripts/db_init.sql" dialect="PostgreSQL" />
   </component>
 </project>
