@@ -104,8 +104,6 @@ func Seed(store store.Storage) {
 	users := generateUsers(20)
 	for _, user := range users {
 		if err := store.Users.Create(ctx, user); err != nil {
-			log.Println("Error creating user", err)
-
 			return
 		}
 	}
@@ -113,7 +111,6 @@ func Seed(store store.Storage) {
 	posts := generatePosts(200, users)
 	for _, post := range posts {
 		if err := store.Posts.Create(ctx, post); err != nil {
-			log.Println("Error creating post", err)
 			return
 		}
 	}
@@ -121,7 +118,6 @@ func Seed(store store.Storage) {
 	comments := generateComments(200, users, posts)
 	for _, comment := range comments {
 		if err := store.Comments.Create(ctx, comment); err != nil {
-			log.Println("Error creating comment", err)
 			return
 		}
 	}
