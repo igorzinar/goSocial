@@ -181,7 +181,7 @@ func (s *PostStore) GetUserFeed(ctx context.Context, id int64, fq PaginatedFeedQ
 		WHERE 
 			f.user_id = $1 AND
 			(p.title ILIKE '%' || $4 || '%' OR p.content ILIKE '%' || $4 || '%')
--- 		  AND (p.tags @> $5 OR $5 = '{}')
+		  AND (p.tags @> $5 OR $5 = '{}')
 		GROUP BY p.id, u.username
 		ORDER BY p.created_at ` + fq.Sort + `
 		LIMIT $2 OFFSET $3
