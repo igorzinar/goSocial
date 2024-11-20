@@ -15,10 +15,19 @@ var usernames = []string{
 	"walter", "charlie", "susan", "nancy", "roger",
 	"molly", "steve", "wendy", "paul", "lucy",
 	"george", "fiona", "harry", "linda", "michael",
-	"nancy", "oliver", "patty", "quinn", "rachel",
-	"sam", "tina", "ursula", "vince", "wanda",
-	"xander", "yvonne", "zane", "amber", "brian",
-	"celia", "dan", "ella", "felix", "gina",
+	"oliver", "patty", "quinn", "rachel", "sam",
+	"tina", "ursula", "vince", "wanda", "xander",
+	"yvonne", "zane", "amber", "brian", "celia",
+	"dan", "ella", "felix", "gina", "hannah",
+	"isabella", "jack", "karen", "leo", "mia",
+	"noah", "olivia", "peter", "quentin", "ruby",
+	"sophia", "thomas", "ulysses", "victoria", "will",
+	"xena", "yasmin", "zoe", "adam", "bella",
+	"chris", "diana", "ethan", "faith", "gabriel",
+	"harper", "iris", "jake", "kim", "logan",
+	"mason", "nina", "owen", "paige", "quincy",
+	"rebecca", "shane", "tara", "uma", "violet",
+	"wayne", "xavier", "yara", "zeke", "amelia",
 }
 
 var titlesList = []string{
@@ -101,9 +110,10 @@ var commentsList = []string{
 
 func Seed(store store.Storage) {
 	ctx := context.Background()
-	users := generateUsers(20)
+	users := generateUsers(500)
 	for _, user := range users {
 		if err := store.Users.Create(ctx, user); err != nil {
+			log.Fatal("Seed generateUsers ====> ", err)
 			return
 		}
 	}
@@ -111,6 +121,7 @@ func Seed(store store.Storage) {
 	posts := generatePosts(200, users)
 	for _, post := range posts {
 		if err := store.Posts.Create(ctx, post); err != nil {
+			log.Fatal("Seed generatePosts ====> ", err)
 			return
 		}
 	}
@@ -118,6 +129,7 @@ func Seed(store store.Storage) {
 	comments := generateComments(200, users, posts)
 	for _, comment := range comments {
 		if err := store.Comments.Create(ctx, comment); err != nil {
+			log.Fatal("Seed generateComments ====> ", err)
 			return
 		}
 	}
@@ -129,9 +141,8 @@ func generateUsers(num int) []*store.User {
 	users := make([]*store.User, num)
 	for i := 0; i < num; i++ {
 		users[i] = &store.User{
-			Username: usernames[i%len(users)] + fmt.Sprintf("%d", i),
-			Email:    usernames[i%len(users)] + fmt.Sprintf("%d", i) + "@example.com",
-			Password: "123123",
+			Username: usernames[i%len(usernames)] + fmt.Sprintf("%d", i),
+			Email:    usernames[i%len(usernames)] + fmt.Sprintf("%d", i) + "@example.com",
 		}
 	}
 	return users

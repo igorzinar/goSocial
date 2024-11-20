@@ -76,6 +76,10 @@ func (app *application) mount() http.Handler {
 			r.Group(func(r chi.Router) {
 				r.Get("/feed", app.getUserFeedHandler)
 			})
+			// Private rote
+			//r.Route("authentication", func(r chi.Router) {
+			//	r.Post("/user", app.registerUserHandler)
+			//})
 		})
 	})
 
