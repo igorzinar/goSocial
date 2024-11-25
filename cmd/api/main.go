@@ -4,8 +4,10 @@ import (
 	"database/sql"
 	"github.com/igorzinar/goSocial/internal/db"
 	"github.com/igorzinar/goSocial/internal/env"
+	"github.com/igorzinar/goSocial/internal/mailer"
 	"github.com/igorzinar/goSocial/internal/store"
 	"go.uber.org/zap"
+	"time"
 )
 
 const version = "0.0.1"
@@ -31,8 +33,9 @@ const version = "0.0.1"
 func main() {
 
 	cfg := config{
-		addr:   env.GetString("ADDR", ":8080"),
-		apiUrl: env.GetString("EXTERNAL_URL", "localhost:8080"),
+		addr:        env.GetString("ADDR", ":8080"),
+		apiUrl:      env.GetString("EXTERNAL_URL", "localhost:8080"),
+		frontendURL: env.GetString("FRONTEND_URL", "http://localhost:4000"),
 		db: dbConfig{
 			addr:         env.GetString("DB_ADDR", "postgres://admin:adminpassword@localhost/social?sslmode=disable"),
 			maxOpenConns: env.GetInt("DB_MAX_OPEN_CONNS", 30),
@@ -40,6 +43,13 @@ func main() {
 			maxIdleTime:  env.GetString("DB_MAX_IDLE_TIME", "15m"),
 		},
 		env: env.GetString("ENV", "development"),
+		mail: mailConfig{
+			fromEmail: env.GetString("FROM_EMAIL", ""),
+			exp:       time.Hour * 24 * 3,
+			sendGrid: sendGridConfig{
+				apiKey: env.GetString("SENDGRID_API_KEY", ""),
+			},
+		},
 	}
 
 	// Logger
@@ -59,11 +69,12 @@ func main() {
 	}(db)
 	logger.Info("database connection pool established")
 	storage := store.NewStorage(db)
-
+	mailer := mailer.NewSendGridMailer(cfg.mail.sendGrid.apiKey, cfg.mail.fromEmail)
 	app := &application{
 		config: cfg,
 		store:  storage,
 		logger: logger,
+		mailer: mailer,
 	}
 
 	mux := app.mount()

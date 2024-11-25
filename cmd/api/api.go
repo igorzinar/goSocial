@@ -5,6 +5,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/igorzinar/goSocial/docs" // this is required to generate swagger docs
+	"github.com/igorzinar/goSocial/internal/mailer"
 	"github.com/igorzinar/goSocial/internal/store"
 	"github.com/swaggo/http-swagger/v2"
 	"go.uber.org/zap"
@@ -16,13 +17,26 @@ type application struct {
 	config config
 	store  store.Storage
 	logger *zap.SugaredLogger
+	mailer mailer.Client
 }
 
 type config struct {
-	addr   string
-	db     dbConfig
-	env    string
-	apiUrl string
+	addr        string
+	db          dbConfig
+	env         string
+	apiUrl      string
+	frontendURL string
+	mail        mailConfig
+}
+
+type mailConfig struct {
+	fromEmail string
+	exp       time.Duration
+	sendGrid  sendGridConfig
+}
+
+type sendGridConfig struct {
+	apiKey string
 }
 
 type dbConfig struct {
@@ -67,6 +81,7 @@ func (app *application) mount() http.Handler {
 			})
 		})
 		r.Route("/users", func(r chi.Router) {
+			r.Put("/activate/{token}", app.activateUserHandler)
 			r.Route("/{userID}", func(r chi.Router) {
 				r.Use(app.userContextMiddleware)
 				r.Get("/", app.getUserHandler)
@@ -76,10 +91,11 @@ func (app *application) mount() http.Handler {
 			r.Group(func(r chi.Router) {
 				r.Get("/feed", app.getUserFeedHandler)
 			})
-			// Private rote
-			//r.Route("authentication", func(r chi.Router) {
-			//	r.Post("/user", app.registerUserHandler)
-			//})
+
+		})
+		// Public rote
+		r.Route("/authentication", func(r chi.Router) {
+			r.Post("/user", app.registerUserHandler)
 		})
 	})
 

@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"github.com/igorzinar/goSocial/internal/store"
 	"log"
@@ -108,15 +109,18 @@ var commentsList = []string{
 	"This was super helpful, thank you!",
 }
 
-func Seed(store store.Storage) {
+func Seed(store store.Storage, db *sql.DB) {
 	ctx := context.Background()
 	users := generateUsers(500)
+	tx, _ := db.BeginTx(ctx, nil)
 	for _, user := range users {
-		if err := store.Users.Create(ctx, user); err != nil {
+		if err := store.Users.Create(ctx, tx, user); err != nil {
+			_ = tx.Rollback()
 			log.Fatal("Seed generateUsers ====> ", err)
 			return
 		}
 	}
+	tx.Commit()
 
 	posts := generatePosts(200, users)
 	for _, post := range posts {
